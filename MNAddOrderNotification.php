@@ -55,8 +55,8 @@ class MNAddOrderNotification extends \Shopware\Components\Plugin
 
         $mail = new Mail();
         $mail->setName('sORDERNOTIFICATION');
-        $mail->setFromMail('');
-        $mail->setFromName('');
+        $mail->setFromMail('{config name=mail}');
+        $mail->setFromName('{config name=shopName}');
         $mail->setSubject('Eine neue Bestellung ist eingegangen');
         $mail->setContent($content);
         $mail->setMailtype(Mail::MAILTYPE_SYSTEM);
@@ -90,13 +90,9 @@ class MNAddOrderNotification extends \Shopware\Components\Plugin
     public function onOrdermail(\Enlight_Event_EventArgs $args)
     {
         $context = $args->get('variables');
-        try {
-            /* @var $ordernotification \Zend_Mail */
-            $ordernotification = $this->container->get('templateMail')->createMail('sORDERNOTIFICATION', $context);
-            $ordernotification->addTo($this->container->get('config')->getByNamespace('MNAddOrderNotification','recipient'));
-            $ordernotification->send();
-        } catch (\Exception $e) {
-            Shopware()->Container()->get('pluginlogger')->log(Logger::ERROR, $e->getMessage());
-        }
+        /* @var $ordernotification \Zend_Mail */
+        $ordernotification = $this->container->get('templateMail')->createMail('sORDERNOTIFICATION', $context);
+        $ordernotification->addTo($this->container->get('config')->getByNamespace('MNAddOrderNotification','recipient'));
+        $ordernotification->send();
     }
 }
